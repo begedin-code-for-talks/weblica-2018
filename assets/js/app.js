@@ -1,21 +1,60 @@
-// Brunch automatically concatenates all files in your
-// watched paths. Those paths can be configured at
-// config.paths.watched in "brunch-config.js".
-//
-// However, those files will only be executed if
-// explicitly imported. The only exception are files
-// in vendor, which are never wrapped in imports and
-// therefore are always executed.
+import 'phoenix_html';
+import socket from './socket';
 
-// Import dependencies
-//
-// If you no longer want to use a dependency, remember
-// to also remove its path from "config.paths.watched".
-import "phoenix_html"
+const [basic, agent, supervisor, genServer] =
+  ['basic', 'agent', 'supervisor', 'genServer'].map((channelName) => {
+    let channel = socket.channel(`${channelName}:lobby`, {})
 
-// Import local files
-//
-// Local files can be imported directly using relative
-// paths "./socket" or full ones "web/static/js/socket".
+    channel.join()
+      .receive('ok', resp => {
+        console.log(`${channelName} joined successfully`, resp);
+        buildList(channelName, resp);
+      })
+      .receive('error', resp => { console.log(`Unable to join ${channelName}`, resp) });
 
-// import socket from "./socket"
+    return channel;
+  });
+
+const channels = { basic, agent, supervisor, genServer };
+
+let urlField = document.getElementById('url');
+let submitUrlButton = document.getElementById('submit');
+
+submit.onclick = function() {
+  let channelName = document.querySelector('[name=channel]:checked').value;
+  channels[channelName].push('shorten', { body: urlField.value });
+}
+
+const items = {
+  basic: document.getElementById('basicItems'),
+  genServer: document.getElementById('genServerItems'),
+  agent: document.getElementById('agentItems'),
+  supervisor: document.getElementById('supervisorItems')
+};
+
+const buildList = (name, payload) => {
+  items[name].innerHTML = '';
+
+  Object.entries(payload).forEach(([long, short]) => {
+    const item = buildListItem(long, short);
+    items[name].appendChild(item);
+  });
+}
+
+const buildListItem = (long, short) => {
+  const anchor = document.createElement('a');
+  anchor.href = short;
+  anchor.innerText = `${short} - ${long}`;
+  const item = document.createElement('li');
+  item.appendChild(anchor);
+  item.classList.add('list-group-item');
+
+  return item;
+};
+
+Object.entries(channels).forEach(([name, channel]) => {
+  channel.on('state', payload => {
+    console.log(`${name}: state, ${JSON.stringify(payload)}`);
+    buildList(name, payload);
+  });
+})

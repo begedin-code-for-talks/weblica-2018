@@ -12,8 +12,8 @@ defmodule Weblica.Application do
       supervisor(Weblica.Repo, []),
       # Start the endpoint when the application starts
       supervisor(WeblicaWeb.Endpoint, []),
-      # Start your own worker by calling: Weblica.Worker.start_link(arg1, arg2, arg3)
-      # worker(Weblica.Worker, [arg1, arg2, arg3]),
+      worker(Weblica.Basic, []),
+      worker(Weblica.GenServer, [])
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

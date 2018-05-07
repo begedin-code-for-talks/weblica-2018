@@ -17,10 +17,6 @@ defmodule WeblicaWeb.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
+    get "/:shortened_url", PageController, :redirector
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", WeblicaWeb do
-  #   pipe_through :api
-  # end
 end
