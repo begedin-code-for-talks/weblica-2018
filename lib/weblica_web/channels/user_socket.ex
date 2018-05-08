@@ -2,13 +2,12 @@ defmodule WeblicaWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  channel "basic:*", WeblicaWeb.BasicChannel
-  channel "genServer:*", WeblicaWeb.GenServerChannel
-  channel "supervisor:*", WeblicaWeb.SupervisorChannel
-  channel "agent:*", WeblicaWeb.AgentChannel
+  channel("basic:*", WeblicaWeb.BasicChannel)
+  channel("genServer:*", WeblicaWeb.GenServerChannel)
+  channel("supervisor:*", WeblicaWeb.SupervisorChannel)
 
   ## Transports
-  transport :websocket, Phoenix.Transports.WebSocket
+  transport(:websocket, Phoenix.Transports.WebSocket)
   # transport :longpoll, Phoenix.Transports.LongPoll
 
   # Socket params are passed from the client and can
@@ -37,5 +36,4 @@ defmodule WeblicaWeb.UserSocket do
   #
   # Returning `nil` makes this socket anonymous.
   def id(_socket), do: nil
-
 end

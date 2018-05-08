@@ -17,6 +17,7 @@
         <nav role="navigation" class="navbar navbar-default">
           <div class="navbar-header">
             <img class="navbar-brand logo" src="<%= static_path(@conn, "/images/weblica_logo.png") %>" />
+            <h1 class="navbar-brand navbar-title">Feed me, Seymour</h1>
           </div>
         </nav>
       </header>

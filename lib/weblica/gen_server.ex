@@ -7,37 +7,42 @@ defmodule Weblica.GenServer do
     GenServer.start_link(__MODULE__, :ok, name: @name)
   end
 
-  def shorten(url) do
-    GenServer.cast(@name, {:shorten, url})
+  def feed() do
+    GenServer.cast(@name, :feed)
   end
 
-  def unshorten(url) do
-    GenServer.cast(@name, {:unshorten, url})
+  def eat() do
+    GenServer.cast(@name, :eat)
+  end
+
+  def punch() do
+    GenServer.cast(@name, :punch)
   end
 
   def list() do
-    GenServer.call(@name, :list) |> IO.inspect()
+    GenServer.call(@name, :list)
   end
 
   # Callbacks
 
   def init(:ok) do
-    {:ok, %{}}
+    {:ok, []}
   end
 
-  def handle_cast({:shorten, url}, state) do
-    {:noreply, state |> Map.put_new(url |> sanitize(), Weblica.StringGenerator.string_of_length(5))}
+  def handle_cast(:feed, state) do
+    {:noreply, state |> Weblica.Feeder.feed()}
   end
 
-  def handle_cast({:unshorten, url}, state) do
-    {:noreply, state |> Map.delete(url)}
+  def handle_cast(:eat, state) do
+    {:noreply, state |> Weblica.Feeder.eat!()}
+  end
+
+  def handle_cast(:punch, state) do
+    state |> Weblica.Feeder.punch!()
+    {:noreply, state}
   end
 
   def handle_call(:list, _from, state) do
     {:reply, state, state}
   end
-
-  defp sanitize("https://" <> rest), do: "https://" <> rest
-  defp sanitize("http://" <> rest), do: "https://" <> rest
-  defp sanitize(url), do: "https://" <> url
 end

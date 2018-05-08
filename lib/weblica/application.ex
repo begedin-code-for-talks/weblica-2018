@@ -12,6 +12,7 @@ defmodule Weblica.Application do
       supervisor(Weblica.Repo, []),
       # Start the endpoint when the application starts
       supervisor(WeblicaWeb.Endpoint, []),
+      supervisor(Weblica.ETSSupervisor, []),
       worker(Weblica.Basic, []),
       worker(Weblica.GenServer, [])
     ]

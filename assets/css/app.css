@@ -1,1 +1,14 @@
 /* This file is for your main application css. */
+
+.food {
+  padding: 1em;
+}
+
+.pellet {
+  display: inline-block;
+  background: #FFAA00;
+  border-radius: 50%;
+  height: 1em;
+  width: 1em;
+  margin: 0.2em;
+}

@@ -1,60 +1,38 @@
 import 'phoenix_html';
 import socket from './socket';
 
-const [basic, agent, supervisor, genServer] =
-  ['basic', 'agent', 'supervisor', 'genServer'].map((channelName) => {
-    let channel = socket.channel(`${channelName}:lobby`, {})
+const pellet = document.createElement('span');
+pellet.classList.add('pellet');
 
-    channel.join()
-      .receive('ok', resp => {
-        console.log(`${channelName} joined successfully`, resp);
-        buildList(channelName, resp);
-      })
-      .receive('error', resp => { console.log(`Unable to join ${channelName}`, resp) });
+const renderFood = (name, { stomach }) => {
+  const container = document.querySelector(`#${name} .food`);
+  container.innerHTML = '';
+  stomach.forEach(() => container.appendChild(pellet.cloneNode()));
+}
+
+const setupChannel = (name) => {
+  const channel = socket.channel(`${name}:lobby`, {});
+
+  channel.join()
+    .receive('ok', resp => { console.log(`Joined ${name}`, resp) })
+    .receive('error', resp => { console.log(`Unable to join ${name}`, resp) });
+
+  return channel;
+}
+
+const [basic, supervisor, genServer] =
+  ['basic', 'supervisor', 'genServer'].map((channelName) => {
+    const channel = setupChannel(channelName);
+
+    const feedButton = document.querySelector(`#${channelName} .btn-success`);
+    const eatButton = document.querySelector(`#${channelName} .btn-primary`);
+    const punchButton = document.querySelector(`#${channelName} .btn-danger`);
+
+    feedButton.onclick = () => channel.push('feed');
+    eatButton.onclick = () => channel.push('eat');
+    punchButton.onclick = () => channel.push('punch');
+
+    channel.on('stomach', payload => renderFood(channelName, payload));
 
     return channel;
   });
-
-const channels = { basic, agent, supervisor, genServer };
-
-let urlField = document.getElementById('url');
-let submitUrlButton = document.getElementById('submit');
-
-submit.onclick = function() {
-  let channelName = document.querySelector('[name=channel]:checked').value;
-  channels[channelName].push('shorten', { body: urlField.value });
-}
-
-const items = {
-  basic: document.getElementById('basicItems'),
-  genServer: document.getElementById('genServerItems'),
-  agent: document.getElementById('agentItems'),
-  supervisor: document.getElementById('supervisorItems')
-};
-
-const buildList = (name, payload) => {
-  items[name].innerHTML = '';
-
-  Object.entries(payload).forEach(([long, short]) => {
-    const item = buildListItem(long, short);
-    items[name].appendChild(item);
-  });
-}
-
-const buildListItem = (long, short) => {
-  const anchor = document.createElement('a');
-  anchor.href = short;
-  anchor.innerText = `${short} - ${long}`;
-  const item = document.createElement('li');
-  item.appendChild(anchor);
-  item.classList.add('list-group-item');
-
-  return item;
-};
-
-Object.entries(channels).forEach(([name, channel]) => {
-  channel.on('state', payload => {
-    console.log(`${name}: state, ${JSON.stringify(payload)}`);
-    buildList(name, payload);
-  });
-})
