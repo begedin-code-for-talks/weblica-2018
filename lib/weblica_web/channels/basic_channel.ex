@@ -6,22 +6,22 @@ defmodule WeblicaWeb.BasicChannel do
     {:ok, socket}
   end
 
-  def handle_in("feed", %{}, socket) do
-    get_worker() |> send(:feed)
+  def handle_in("add", %{}, socket) do
+    get_worker() |> send(:add)
     Process.send_after(self(), :notify_state, 50)
 
     {:noreply, socket}
   end
 
-  def handle_in("eat", %{}, socket) do
-    get_worker() |> send(:eat)
+  def handle_in("remove", %{}, socket) do
+    get_worker() |> send(:remove)
     Process.send_after(self(), :notify_state, 50)
 
     {:noreply, socket}
   end
 
-  def handle_in("punch", %{}, socket) do
-    get_worker() |> send(:punch)
+  def handle_in("crash", %{}, socket) do
+    get_worker() |> send(:crash)
     Process.send_after(self(), :notify_state, 50)
 
     {:noreply, socket}
@@ -50,6 +50,6 @@ defmodule WeblicaWeb.BasicChannel do
   end
 
   defp notify_state(socket) do
-    socket |> broadcast!("stomach", %{stomach: get_worker_state()})
+    socket |> broadcast!("status", %{tokens: get_worker_state()})
   end
 end

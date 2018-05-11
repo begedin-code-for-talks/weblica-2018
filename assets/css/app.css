@@ -1,14 +1,14 @@
 /* This file is for your main application css. */
 
-.food {
-  padding: 1em;
+.tokens {
+  display: flex;
+  flex-flow: row wrap;
 }
 
-.pellet {
-  display: inline-block;
+.token {
   background: #FFAA00;
-  border-radius: 50%;
+  border-radius: 30%;
   height: 1em;
   width: 1em;
-  margin: 0.2em;
+  margin: 1px;
 }

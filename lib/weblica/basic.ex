@@ -5,14 +5,14 @@ defmodule Weblica.Basic do
 
   def loop(state) do
     receive do
-      :feed ->
-        state |> Weblica.Feeder.feed() |> loop()
+      :add ->
+        state |> Weblica.Token.add() |> loop()
 
-      :eat ->
-        state |> Weblica.Feeder.eat!() |> loop()
+      :remove ->
+        state |> Weblica.Token.remove!() |> loop()
 
-      :punch ->
-        state |> Weblica.Feeder.punch!() |> loop()
+      :crash ->
+        state |> Weblica.Token.crash!() |> loop()
 
       {:list, pid} ->
         send(pid, {:ok, state})

@@ -6,22 +6,22 @@ defmodule WeblicaWeb.SupervisorChannel do
     {:ok, socket}
   end
 
-  def handle_in("feed", %{}, socket) do
-    Weblica.ETSGenServer.feed()
+  def handle_in("add", %{}, socket) do
+    Weblica.ETSGenServer.add()
     Process.send_after(self(), :notify_state, 50)
 
     {:noreply, socket}
   end
 
-  def handle_in("eat", %{}, socket) do
-    Weblica.ETSGenServer.eat()
+  def handle_in("remove", %{}, socket) do
+    Weblica.ETSGenServer.remove()
     Process.send_after(self(), :notify_state, 50)
 
     {:noreply, socket}
   end
 
-  def handle_in("punch", %{}, socket) do
-    Weblica.ETSGenServer.punch()
+  def handle_in("crash", %{}, socket) do
+    Weblica.ETSGenServer.crash()
     Process.send_after(self(), :notify_state, 50)
 
     {:noreply, socket}
@@ -34,6 +34,6 @@ defmodule WeblicaWeb.SupervisorChannel do
   end
 
   defp notify_state(socket) do
-    socket |> broadcast!("stomach", %{stomach: Weblica.ETSGenServer.list()})
+    socket |> broadcast!("status", %{tokens: Weblica.ETSGenServer.list()})
   end
 end

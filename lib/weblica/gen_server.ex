@@ -7,16 +7,16 @@ defmodule Weblica.GenServer do
     GenServer.start_link(__MODULE__, :ok, name: @name)
   end
 
-  def feed() do
-    GenServer.cast(@name, :feed)
+  def add() do
+    GenServer.cast(@name, :add)
   end
 
-  def eat() do
-    GenServer.cast(@name, :eat)
+  def remove() do
+    GenServer.cast(@name, :remove)
   end
 
-  def punch() do
-    GenServer.cast(@name, :punch)
+  def crash() do
+    GenServer.cast(@name, :crash)
   end
 
   def list() do
@@ -29,16 +29,16 @@ defmodule Weblica.GenServer do
     {:ok, []}
   end
 
-  def handle_cast(:feed, state) do
-    {:noreply, state |> Weblica.Feeder.feed()}
+  def handle_cast(:add, state) do
+    {:noreply, state |> Weblica.Token.add()}
   end
 
-  def handle_cast(:eat, state) do
-    {:noreply, state |> Weblica.Feeder.eat!()}
+  def handle_cast(:remove, state) do
+    {:noreply, state |> Weblica.Token.remove!()}
   end
 
-  def handle_cast(:punch, state) do
-    state |> Weblica.Feeder.punch!()
+  def handle_cast(:crash, state) do
+    state |> Weblica.Token.crash!()
     {:noreply, state}
   end
 

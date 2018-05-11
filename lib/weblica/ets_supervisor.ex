@@ -6,7 +6,7 @@ defmodule Weblica.ETSSupervisor do
   end
 
   def init(:ok) do
-    table = :ets.new(:food_store, [:set, :public])
+    table = :ets.new(:token_store, [:set, :public])
 
     children = [%{id: Weblica.ETSGenServer, start: {Weblica.ETSGenServer, :start_link, [table]}}]
 

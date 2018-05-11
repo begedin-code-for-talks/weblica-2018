@@ -7,16 +7,16 @@ defmodule Weblica.ETSGenServer do
     GenServer.start_link(__MODULE__, ets_table, name: @name)
   end
 
-  def feed() do
-    GenServer.cast(@name, :feed)
+  def add() do
+    GenServer.cast(@name, :add)
   end
 
-  def eat() do
-    GenServer.cast(@name, :eat)
+  def remove() do
+    GenServer.cast(@name, :remove)
   end
 
-  def punch() do
-    GenServer.cast(@name, :punch)
+  def crash() do
+    GenServer.cast(@name, :crash)
   end
 
   def list() do
@@ -26,34 +26,34 @@ defmodule Weblica.ETSGenServer do
   # Callbacks
 
   def init(table) do
-    case :ets.lookup(table, :food) do
-      [{:food, food}] ->
-        {:ok, {table, food}}
+    case :ets.lookup(table, :tokens) do
+      [{:tokens, tokens}] ->
+        {:ok, {table, tokens}}
 
       [] ->
-        :ets.insert(table, {:food, []})
+        :ets.insert(table, {:tokens, []})
         {:ok, {table, []}}
     end
   end
 
-  def handle_cast(:feed, {table, food}) do
-    food = food |> Weblica.Feeder.feed()
-    :ets.insert(table, {:food, food})
-    {:noreply, {table, food}}
+  def handle_cast(:add, {table, tokens}) do
+    tokens = tokens |> Weblica.Token.add()
+    :ets.insert(table, {:tokens, tokens})
+    {:noreply, {table, tokens}}
   end
 
-  def handle_cast(:eat, {table, food}) do
-    food = food |> Weblica.Feeder.eat!()
-    :ets.insert(table, {:food, food})
-    {:noreply, {table, food}}
+  def handle_cast(:remove, {table, tokens}) do
+    tokens = tokens |> Weblica.Token.remove!()
+    :ets.insert(table, {:tokens, tokens})
+    {:noreply, {table, tokens}}
   end
 
-  def handle_cast(:punch, {table, food}) do
-    food = food |> Weblica.Feeder.punch!()
-    {:noreply, {table, food}}
+  def handle_cast(:crash, {table, tokens}) do
+    tokens = tokens |> Weblica.Token.crash!()
+    {:noreply, {table, tokens}}
   end
 
-  def handle_call(:list, _from, {table, food}) do
-    {:reply, food, {table, food}}
+  def handle_call(:list, _from, {table, tokens}) do
+    {:reply, tokens, {table, tokens}}
   end
 end

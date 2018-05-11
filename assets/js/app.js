@@ -1,13 +1,14 @@
 import 'phoenix_html';
 import socket from './socket';
 
-const pellet = document.createElement('span');
-pellet.classList.add('pellet');
+const token = document.createElement('span');
+token.classList.add('token');
 
-const renderFood = (name, { stomach }) => {
-  const container = document.querySelector(`#${name} .food`);
+const render = (name, { tokens }) => {
+  console.log('rendering', tokens);
+  const container = document.querySelector(`#${name} .tokens`);
   container.innerHTML = '';
-  stomach.forEach(() => container.appendChild(pellet.cloneNode()));
+  tokens.forEach(() => container.appendChild(token.cloneNode()));
 }
 
 const setupChannel = (name) => {
@@ -24,15 +25,15 @@ const [basic, supervisor, genServer] =
   ['basic', 'supervisor', 'genServer'].map((channelName) => {
     const channel = setupChannel(channelName);
 
-    const feedButton = document.querySelector(`#${channelName} .btn-success`);
-    const eatButton = document.querySelector(`#${channelName} .btn-primary`);
-    const punchButton = document.querySelector(`#${channelName} .btn-danger`);
+    const addButton = document.querySelector(`#${channelName} .btn-primary`);
+    const removeButton = document.querySelector(`#${channelName} .btn-success`);
+    const crashButton = document.querySelector(`#${channelName} .btn-danger`);
 
-    feedButton.onclick = () => channel.push('feed');
-    eatButton.onclick = () => channel.push('eat');
-    punchButton.onclick = () => channel.push('punch');
+    addButton.onclick = () => channel.push('add');
+    removeButton.onclick = () => channel.push('remove');
+    crashButton.onclick = () => channel.push('crash');
 
-    channel.on('stomach', payload => renderFood(channelName, payload));
+    channel.on('status', payload => render(channelName, payload));
 
     return channel;
   });

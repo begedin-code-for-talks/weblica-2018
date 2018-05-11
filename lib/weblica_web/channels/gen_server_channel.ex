@@ -6,22 +6,22 @@ defmodule WeblicaWeb.GenServerChannel do
     {:ok, socket}
   end
 
-  def handle_in("feed", %{}, socket) do
-    Weblica.GenServer.feed()
+  def handle_in("add", %{}, socket) do
+    Weblica.GenServer.add()
     Process.send_after(self(), :notify_state, 50)
 
     {:noreply, socket}
   end
 
-  def handle_in("eat", %{}, socket) do
-    Weblica.GenServer.eat()
+  def handle_in("remove", %{}, socket) do
+    Weblica.GenServer.remove()
     Process.send_after(self(), :notify_state, 50)
 
     {:noreply, socket}
   end
 
-  def handle_in("punch", %{}, socket) do
-    Weblica.GenServer.punch()
+  def handle_in("crash", %{}, socket) do
+    Weblica.GenServer.crash()
     Process.send_after(self(), :notify_state, 50)
     {:noreply, socket}
   end
@@ -32,6 +32,6 @@ defmodule WeblicaWeb.GenServerChannel do
   end
 
   defp notify_state(socket) do
-    socket |> broadcast!("stomach", %{stomach: Weblica.GenServer.list()})
+    socket |> broadcast!("status", %{tokens: Weblica.GenServer.list()})
   end
 end
